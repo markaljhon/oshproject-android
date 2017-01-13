@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:background="@color/colorPrimaryDark"
+				android:id="@+id/overlay_record"
+				android:visibility="visible">
+
+	<ProgressBar
+		android:id="@+id/progressbarRecord"
+		android:layout_width="100dp"
+		android:layout_height="100dp"
+		android:indeterminate="false"
+		android:layout_gravity="center"
+		android:progressDrawable="@drawable/progress_front"
+		android:background="@drawable/progress_back"
+		style="?android:attr/progressBarStyleHorizontal"
+		android:max="60000"
+		android:progress="0"
+		android:layout_marginBottom="40dp"
+		android:layout_alignParentBottom="true"
+		android:layout_centerHorizontal="true" />
+
+	<TextView
+		android:text="Listening"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:id="@+id/textViewRecordStatus"
+		android:textAppearance="@style/TextAppearance.AppCompat.Title"
+		android:textColor="@color/colorLightGray"
+		android:textAllCaps="false"
+		android:textAlignment="center"
+		android:textSize="20sp"
+		android:typeface="monospace"
+		android:layout_marginBottom="53dp"
+		android:layout_above="@+id/progressbarRecord"
+		android:layout_centerHorizontal="true" />
+
+	<Button
+		android:layout_width="49dp"
+		android:layout_height="49dp"
+		android:layout_alignBottom="@+id/progressbarRecord"
+		android:layout_toLeftOf="@+id/textViewRecordStatus"
+	android:layout_marginRight="39dp"
+	android:layout_marginEnd="39dp"
+	android:id="@+id/buttonClose"
+	android:background="@android:drawable/ic_menu_close_clear_cancel"
+	style="@style/Widget.AppCompat.Button.Borderless" />
+
+	<Button
+		android:layout_width="49dp"
+		android:layout_height="49dp"
+		android:id="@+id/buttonOpen"
+		android:background="@drawable/btn_circle_check"
+		style="@style/Widget.AppCompat.Button.Borderless"
+		android:layout_alignBottom="@+id/progressbarRecord"
+		android:layout_toRightOf="@+id/textViewRecordStatus"
+		android:layout_marginLeft="39dp"
+		android:layout_marginStart="39dp"/>
+
+	<com.oshproject.osh.WaveformView
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="@color/colorPrimaryDark"
+		android:id="@+id/waveformView"
+		android:layout_marginTop="20dp"
+		android:layout_alignParentTop="true"
+		android:layout_alignParentRight="true"
+		android:layout_alignParentEnd="true"
+		android:layout_above="@+id/textViewRecordStatus"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentStart="true"/>
+
+</RelativeLayout>

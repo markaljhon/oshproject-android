@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="colorPrimary">#212121</color>
+	<color name="colorPrimaryDark">#0d0d0d</color>
+	<color name="colorAccent">#7fcac3</color>
+	<color name="colorLightGray">#b8b8b8</color>
+	<color name="colorRed">#45030b</color>
+
+	<color name="default_waveform">#2ae0c4</color>
+	<color name="default_waveformFill">#80FFC0</color>
+	<color name="default_playback_indicator">#ffff66</color>
+	<color name="default_timecode">#ddffffdd</color>
+	<color name="default_background">#1d2532</color>
+</resources>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:background="@color/colorPrimaryDark"
+				android:id="@+id/overlay_record"
+				android:visibility="visible">
+
+	<Button
+		android:layout_width="49dp"
+		android:layout_height="49dp"
+		android:id="@+id/buttonClose"
+		android:background="@android:drawable/ic_menu_close_clear_cancel"
+		style="@style/Widget.AppCompat.Button.Borderless"
+		android:layout_alignParentBottom="true"
+		android:layout_alignRight="@+id/progressbarRecord"
+		android:layout_alignEnd="@+id/progressbarRecord"
+		android:layout_marginRight="22dp"
+		android:layout_marginEnd="22dp"
+		android:layout_marginBottom="19dp"/>
+
+	<ProgressBar
+		android:id="@+id/progressbarRecord"
+		android:layout_width="100dp"
+		android:layout_height="100dp"
+		android:indeterminate="false"
+		android:layout_gravity="center"
+		android:progressDrawable="@drawable/progress_front"
+		android:background="@drawable/progress_back"
+		style="?android:attr/progressBarStyleHorizontal"
+		android:max="60000"
+		android:progress="0"
+		android:layout_marginRight="12dp"
+		android:layout_marginEnd="12dp"
+		android:layout_above="@+id/buttonClose"
+		android:layout_alignParentRight="true"
+		android:layout_alignParentEnd="true"
+		android:layout_marginBottom="14dp"/>
+
+	<Button
+		android:layout_width="48dp"
+		android:layout_height="48dp"
+		android:rotation="45"
+		android:id="@+id/buttonOpen"
+		android:background="@android:drawable/ic_menu_close_clear_cancel"
+		style="@style/Widget.AppCompat.Button.Borderless"
+		android:layout_above="@+id/progressbarRecord"
+		android:layout_alignRight="@+id/buttonClose"
+		android:layout_alignEnd="@+id/buttonClose"
+		android:layout_marginBottom="20dp"/>
+
+	<TextView
+		android:text="Listening"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:id="@+id/textViewRecordStatus"
+		android:textAppearance="@style/TextAppearance.AppCompat.Title"
+		android:textColor="@color/colorLightGray"
+		android:textAllCaps="false"
+		android:textAlignment="center"
+		android:textSize="20sp"
+		android:typeface="monospace"
+		android:layout_marginTop="16dp"
+		android:layout_alignParentTop="true"
+		android:layout_alignRight="@+id/progressbarRecord"
+		android:layout_alignEnd="@+id/progressbarRecord"/>
+
+</RelativeLayout>

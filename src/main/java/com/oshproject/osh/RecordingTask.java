@@ -1,7 +1,9 @@
 package com.oshproject.osh;
 
 import android.media.AudioFormat;
+import android.media.AudioManager;
 import android.media.AudioRecord;
+import android.media.AudioTrack;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
 import android.os.SystemClock;
@@ -18,10 +20,11 @@ class RecordingTask extends AsyncTask<Integer, Long, Void> {
 	private RecordCallbacks mRecordCallbacks;
 	boolean RunningState = false;
 	private static final int SAMPLE_RATE = 44100;
-	private short[] shAudioBuffer;
+	private short[] tempAudioBuffer;
 	private AudioRecord mAudioRecord;
 	private int iBufferSize;
 	private static ExecutorService mExecutorService;
+	long lnSamples = 0;AudioTrack track;
 
 	RecordingTask(RecordCallbacks recordCallbacks) {
 		mRecordCallbacks = recordCallbacks;
@@ -33,9 +36,34 @@ class RecordingTask extends AsyncTask<Integer, Long, Void> {
 		}
 
 		mAudioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, iBufferSize);
-		mExecutorService = new ThreadPoolExecutor(1, 1,
-				0L, TimeUnit.MILLISECONDS,
-				new LinkedBlockingQueue<Runnable>());
+		mExecutorService = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+		track = new AudioTrack(AudioManager.STREAM_ALARM, SAMPLE_RATE, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT, AudioTrack.getMinBufferSize(SAMPLE_RATE, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT), AudioTrack.MODE_STREAM);
+		AudioRecord.OnRecordPositionUpdateListener mUpdateListener =
+				new AudioRecord.OnRecordPositionUpdateListener()
+				{
+					short[] mAudioBuffer = new short[44100];
+
+					@Override
+					public void onPeriodicNotification(AudioRecord recorder) {
+						mAudioBuffer = null;
+						mAudioBuffer = new short[44100];
+						lnSamples += mAudioRecord.read(mAudioBuffer, 0, mAudioBuffer.length);
+						//mExecutorService.execute(new SamplingTask(mAudioBuffer, lnSamples));
+//						mExecutorService.execute(new PlayingTask(mAudioBuffer));
+						//track.write(mAudioBuffer, 0, mAudioBuffer.length);
+						//track.play();
+					}
+
+					@Override
+					public void onMarkerReached(AudioRecord recorder)
+					{
+						// do nothing.
+					}
+				};
+//		mAudioRecord.setRecordPositionUpdateListener(mUpdateListener);
+//		mAudioRecord.setPositionNotificationPeriod(44100);
+
+		tempAudioBuffer = new short[iBufferSize];
 	}
 
 	@Override
@@ -49,34 +77,32 @@ class RecordingTask extends AsyncTask<Integer, Long, Void> {
 
 	@Override
 	protected Void doInBackground(Integer... maxLength) {
+		PlayingTask mPlayingTask = new PlayingTask();
+		int i = 0;
 		mAudioRecord.startRecording();
 
-		long lnSamples = 0;
 		while (!isCancelled()/* && time <= maxLength[0]*/) {
-			shAudioBuffer = null;
-			shAudioBuffer = new short[iBufferSize];
-			lnSamples += mAudioRecord.read(shAudioBuffer, 0, shAudioBuffer.length);
-			mExecutorService.execute(new SamplingTask(shAudioBuffer, lnSamples));
-//			new Thread(new SamplingTask(shAudioBuffer, lnSamples)).start();
-//			new Thread(new Runnable() {
-//				@Override
-//				public void run() {
-//					for (double j:shApublishProgress(time);udioBuffer)
-//						Log.v("RecordingTask: ", String.format("%f %d %d %d %d", j/32768.0, SystemClock.currentThreadTimeMillis(), lnSamples, count++, time));
-//				}
-//			}).start();
-			publishProgress(SystemClock.currentThreadTimeMillis());
+			mAudioRecord.read(tempAudioBuffer, 0, tempAudioBuffer.length);
+//			track.write(tempAudioBuffer, 0, tempAudioBuffer.length);
+//			if (track.getPlayState() != AudioTrack.PLAYSTATE_PLAYING)
+//				track.play();
+			mExecutorService.execute(mPlayingTask.play(tempAudioBuffer));
+			//publishProgress(SystemClock.currentThreadTimeMillis()*100);
 		}
 		return null;
 	}
 
+	long time = 0;
+
 	@Override
 	protected void onProgressUpdate(Long... progress) {
 		mRecordCallbacks.onProgressUpdate(progress[0]);
+		time = progress[0];
 	}
 
 	@Override
 	protected void onCancelled() {
+		Log.v("RecordingTask: ", String.format("%d",time));
 		RunningState = false;
 		mAudioRecord.stop();
 		mAudioRecord.release();
@@ -85,6 +111,7 @@ class RecordingTask extends AsyncTask<Integer, Long, Void> {
 
 	@Override
 	protected void onPostExecute(Void ignore) {
+		Log.v("RecordingTask: ", String.format("%d",time));
 		RunningState = false;
 		mAudioRecord.stop();
 		mAudioRecord.release();

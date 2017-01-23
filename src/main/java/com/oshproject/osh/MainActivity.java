@@ -22,8 +22,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity
-		implements NavigationView.OnNavigationItemSelectedListener, RecordCallbacks {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, RecordCallbacks {
 	private MainFragment mMainFragment;
 	private Integer mMaxLength = 60000;
 	private static final String KEY_PROGRESS = "key_progress";
@@ -57,8 +56,9 @@ public class MainActivity extends AppCompatActivity
 		fab.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				overlay.setVisibility(View.VISIBLE);
 				snackbarListen.show();
+				overlay.setVisibility(View.VISIBLE);
+				fab.setVisibility(View.GONE);
 			}
 		});
 
@@ -67,8 +67,10 @@ public class MainActivity extends AppCompatActivity
 		buttonClose.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
+				fab.setVisibility(View.VISIBLE);
 				overlay.setVisibility(View.GONE);
 				snackbarListen.dismiss();
+				mMainFragment.cancelRecord();
 			}
 		});
 
@@ -78,11 +80,9 @@ public class MainActivity extends AppCompatActivity
 			public void onClick(View view) {
 				if (ContextCompat.checkSelfPermission(view.getContext(), android.Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
 					if (mMainFragment.isTaskRunning()) {
-						Toast.makeText(getBaseContext(), "CANCEL", Toast.LENGTH_SHORT).show();
-						mMainFragment.cancel();
+						mMainFragment.stopRecord();
 					} else {
-						Toast.makeText(getBaseContext(), "START", Toast.LENGTH_SHORT).show();
-						mMainFragment.start(mMaxLength);
+						mMainFragment.startRecord(mMaxLength);
 					}
 				} else {
 					requestAudioPermission();
@@ -170,25 +170,8 @@ public class MainActivity extends AppCompatActivity
 
 	// MainFragment/RecordingTask Callback Implementations
 	@Override
-	public void onPreExecute(){
-		Toast.makeText(this, "Start Recording", Toast.LENGTH_SHORT).show();
-	}
-
-	@Override
 	public void onProgressUpdate(Long progress) {
 		progressBarRecord.setProgress(progress.intValue());
-	}
-
-	@Override
-	public void onCancelled() {
-		progressBarRecord.setProgress(mMaxLength);
-		Toast.makeText(this, "Stop Recording", Toast.LENGTH_SHORT).show();
-	}
-
-	@Override
-	public void onPostExecute() {
-		progressBarRecord.setProgress(mMaxLength);
-		Toast.makeText(this, "Stop Recording", Toast.LENGTH_SHORT).show();
 	}
 
 	private void requestAudioPermission() {

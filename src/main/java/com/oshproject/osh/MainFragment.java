@@ -4,11 +4,10 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
-public class MainFragment extends Fragment {
+ public class MainFragment extends Fragment {
 	private static final String LOG_TAG = MainFragment.class.getSimpleName();
 
 	protected RecordCallbacks mRecordCallbacks;
-	private boolean mRunningState = false;
 	private  RecordingTask mRecordingTask;
 
 	@Override
@@ -37,18 +36,21 @@ public class MainFragment extends Fragment {
 		super.onDestroy();
 	}
 
-	// taga simula ng recording task
-	public void start(Integer maxLength) {
-		mRunningState = true;
+	// Start recording thread.
+	public void startRecord(Integer maxLength) {
+		if (mRecordingTask == null || !mRecordingTask.RunningState)
+			mRecordingTask = new RecordingTask(mRecordCallbacks);
 		mRecordingTask.execute(maxLength);
 	}
 
-	// taga tigil ng recording task
-	public void cancel() {
-		mRunningState = false;
+	// Drop recording thread. Stop all threads related to recording task.
+	public void cancelRecord() {
 		mRecordingTask.cancel(true);
-		mRecordingTask = null;
-		mRecordingTask = new RecordingTask(mRecordCallbacks);
+	}
+
+	// Stop only the recording in recording thread.
+	public void stopRecord() {
+		mRecordingTask.RunningState = false;
 	}
 
 	public boolean isTaskRunning() {

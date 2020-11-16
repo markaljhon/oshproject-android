@@ -6,5 +6,5 @@ But other than that, this showcase how you can utilize multi-threading / multipl
 Concurrent operations are used in the app's digital signal processing, running everything on the phone.
 
 # Authors :
-	Mark Aljhon Ornupia
-	Veinn Geomai Aquino
+Aljhon Ornupia
+Vein Geomai Aquino
